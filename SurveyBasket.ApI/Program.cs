@@ -9,8 +9,11 @@ namespace SurveyBasket.ApI
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add Services 
             builder.Services.AddServicesDependencies(builder.Configuration);
+
+            //IdentityServices 
+            builder.Services.AddIdentityServicesConfig(builder.Configuration);
 
             var app = builder.Build();
 

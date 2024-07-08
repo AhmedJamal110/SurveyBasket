@@ -26,7 +26,7 @@ namespace SurveyBasket.ApI.Extensions
             return services;
         }
 
-        public static IServiceCollection AddSwaggerServices(this IServiceCollection services)
+        private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
@@ -34,7 +34,7 @@ namespace SurveyBasket.ApI.Extensions
         }
 
 
-        public static IServiceCollection AddMapsterConfigration(this IServiceCollection services)
+        private static IServiceCollection AddMapsterConfigration(this IServiceCollection services)
         {
             var config = TypeAdapterConfig.GlobalSettings;
             config.Scan(Assembly.GetExecutingAssembly());
@@ -42,7 +42,7 @@ namespace SurveyBasket.ApI.Extensions
             return services;
         }
 
-        public static IServiceCollection AddFluentValidationConfigration(this IServiceCollection services)
+        private static IServiceCollection AddFluentValidationConfigration(this IServiceCollection services)
         {
 
             services.AddFluentValidationAutoValidation()

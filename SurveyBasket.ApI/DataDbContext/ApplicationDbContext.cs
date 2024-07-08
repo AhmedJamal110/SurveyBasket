@@ -1,8 +1,7 @@
 ﻿
-
 namespace SurveyBasket.ApI.DataDbContext
 {
-    public class ApplicationDbContext :DbContext  
+    public class ApplicationDbContext :IdentityDbContext<AppUser>  
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> option):base(option)
         {
