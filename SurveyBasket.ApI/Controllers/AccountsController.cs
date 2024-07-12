@@ -28,6 +28,33 @@ namespace SurveyBasket.ApI.Controllers
             return result is null ? BadRequest("Invalid Email or Password") : Ok(result);
         }
 
+        [HttpPost("refresh")]
+        public async Task<ActionResult> RefreshToken (RefrshTokenRequest request , CancellationToken cancellationToken)
+        {
+           var result  = await _authService.GetRefreshToken(request.Token, request.RefreshToken, cancellationToken);
+            if (result is null)
+                return BadRequest("invalid token");
+            
+            return Ok(result);
+        
+        }
+
+        [HttpPut("revoke-refresh- token")]
+        public async Task<ActionResult> RevokeRefreshTokenAsync(RefrshTokenRequest request , CancellationToken cancellationToken)
+        {
+            var isRevoke = await _authService.RevokeRefreshToken(request.Token, request.RefreshToken, cancellationToken);
+
+
+            return isRevoke ? Ok() : BadRequest("Operation Failded"); 
+        
+        }
+
+
+
+
+
+
+
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponse>> Register(AuthRequest request)
         {

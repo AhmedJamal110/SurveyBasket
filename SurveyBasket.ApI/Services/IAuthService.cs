@@ -6,6 +6,10 @@ namespace SurveyBasket.ApI.Services
     {
 
         Task<AuthResponse?> GetTokenForUser(string email, string password, CancellationToken cancellationToken = default);
-     
+
+        Task<AuthResponse?> GetRefreshToken(string token, string refreshToken, CancellationToken cancellationToken);
+        Task<bool> RevokeRefreshToken(string token, string refreshToken, CancellationToken cancellationToken);
+
+
     }
 }

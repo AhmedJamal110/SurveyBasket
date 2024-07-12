@@ -42,6 +42,35 @@ namespace SurveyBasket.ApI.JwtService
 
             return (token: new JwtSecurityTokenHandler().WriteToken(token), expireIn: _options.ExpireMinutes * 60);
         }
+
+        public  string? ValidatToken(string token)
+        {
+              var tokenHandler =   new JwtSecurityTokenHandler();
+
+            //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.key));
+
+            try
+            {
+                 tokenHandler.ValidateToken(token, new TokenValidationParameters
+                {
+                    IssuerSigningKey = _key,
+                    ValidateIssuerSigningKey = true,
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+                    ClockSkew = TimeSpan.Zero
+                },  out SecurityToken validatedToken);
+
+                var jwtToken = (JwtSecurityToken)validatedToken;
+                return   jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
+         
+            }
+         
+            catch 
+            {
+                return null;
+            }
+
+        }
     }
 
 }

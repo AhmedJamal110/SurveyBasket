@@ -4,5 +4,8 @@
     {
 
         Task<(string token , int expireIn )> CreateTokenAsync(AppUser user);
+
+        string? ValidatToken(string token);
+
     }
 }

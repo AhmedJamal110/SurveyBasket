@@ -7,7 +7,9 @@
             string LastName,
             string? Email ,
             string Token ,
-            int ExpireIn
-        
+            int ExpireIn,
+            string RefreshToken,
+            DateTime RefreshTokenExpiration
+
         );
 }
