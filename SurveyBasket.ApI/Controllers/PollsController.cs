@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SurveyBasket.ApI.Contracts.Polls;
@@ -8,6 +9,7 @@ namespace SurveyBasket.ApI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   //[Authorize]
     public class PollsController : ControllerBase
     {
         private readonly IPollServices _pollServices;

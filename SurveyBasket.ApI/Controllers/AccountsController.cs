@@ -39,7 +39,7 @@ namespace SurveyBasket.ApI.Controllers
         
         }
 
-        [HttpPut("revoke-refresh- token")]
+        [HttpPut("revoke-refresh-token")]
         public async Task<ActionResult> RevokeRefreshTokenAsync(RefrshTokenRequest request , CancellationToken cancellationToken)
         {
             var isRevoke = await _authService.RevokeRefreshToken(request.Token, request.RefreshToken, cancellationToken);
