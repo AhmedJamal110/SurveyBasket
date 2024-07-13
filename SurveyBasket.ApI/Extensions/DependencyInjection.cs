@@ -8,9 +8,24 @@ namespace SurveyBasket.ApI.Extensions
         public static IServiceCollection AddServicesDependencies(this IServiceCollection services , IConfiguration configuration)
         {
             services.AddControllers();
+           
+            //CorsOrigin
+            var allowOrigin = configuration.GetSection("AllowedOrigins").Get<string[]>();
+            services.AddCors(option =>
+            {
+                option.AddDefaultPolicy(opt =>
+                {
+                    opt
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .WithOrigins(allowOrigin!);
+
+
+                });
+            });
 
             //SwaggerServices
-            services.AddSwaggerServices();
+            services.AddSwaggerDocumentationServices();
 
             //dbContext
             services.AddDbContext<ApplicationDbContext>(option =>
@@ -18,17 +33,19 @@ namespace SurveyBasket.ApI.Extensions
                 option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddScoped<IPollServices, PollServices>();
+            
             //Mapster 
-
-            services.AddMapsterConfigration();
+             services.AddMapsterConfigration();
+            
             //fluentValidation
-
-            services.AddFluentValidationConfigration();
+             services.AddFluentValidationConfigration();
 
             return services;
         }
 
-        private static IServiceCollection AddSwaggerServices(this IServiceCollection services)
+
+
+        private static IServiceCollection AddSwaggerDocumentationServices(this IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(C =>
@@ -63,11 +80,6 @@ namespace SurveyBasket.ApI.Extensions
 
 
         }
-
-
-
-
-
         private static IServiceCollection AddMapsterConfigration(this IServiceCollection services)
         {
             var config = TypeAdapterConfig.GlobalSettings;
@@ -75,7 +87,6 @@ namespace SurveyBasket.ApI.Extensions
             services.AddSingleton<IMapper>(new Mapper(config));
             return services;
         }
-
         private static IServiceCollection AddFluentValidationConfigration(this IServiceCollection services)
         {
 
