@@ -9,9 +9,11 @@ global using MapsterMapper;
 global using FluentValidation.AspNetCore;
 global using Microsoft.AspNetCore.Identity;
 global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using OneOf;
 
 
 
 global using SurveyBasket.ApI.DataDbContext;
 global using SurveyBasket.ApI.Services;
 global using SurveyBasket.ApI.Entities;
+global using SurveyBasket.ApI.Abstractions;

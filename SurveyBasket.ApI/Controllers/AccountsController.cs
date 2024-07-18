@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SurveyBasket.ApI.Contracts.Authentication;
+using SurveyBasket.ApI.Extensions;
 
 namespace SurveyBasket.ApI.Controllers
 {
@@ -19,13 +21,24 @@ namespace SurveyBasket.ApI.Controllers
             _signInManager = signInManager;
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<ActionResult> Login(AuthRequest request , CancellationToken cancellationToken)
         {
             var result = await _authService.GetTokenForUser(request.Email, request.Password, cancellationToken);
 
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.ToProblem(StatusCodes.Status400BadRequest); 
+               
 
-            return result is null ? BadRequest("Invalid Email or Password") : Ok(result);
+            //return result.Match<ActionResult>(
+            //    result => Ok(result),
+            //      error => Problem(
+            //          statusCode: StatusCodes.Status400BadRequest,
+            //          title: "Bad Request",
+            //          extens                      
+                      
+            //          ));
         }
 
         [HttpPost("refresh")]

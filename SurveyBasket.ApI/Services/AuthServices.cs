@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.HttpResults;
 using SurveyBasket.ApI.Contracts.Authentication;
+using SurveyBasket.ApI.Errors;
 using SurveyBasket.ApI.JwtService;
 using System.Security.Cryptography;
 
@@ -16,16 +17,16 @@ namespace SurveyBasket.ApI.Services
             _userManager = userManager;
             _jwtProvider = jwtProvider;
         }
-        public async Task<AuthResponse?> GetTokenForUser(string email, string password, CancellationToken cancellationToken = default)
+        public async Task<TResult<AuthResponse>>  GetTokenForUser(string email, string password, CancellationToken cancellationToken = default)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user is null)
-                return null;
-
+                return Result.Faliure<AuthResponse>(UserError.InvalidCredential);
+                //return UserError.InvalidCredential;
             var result = await _userManager.CheckPasswordAsync(user, password);
             if (!result)
-                return null;
-
+                return Result.Faliure<AuthResponse>(UserError.InvalidCredential);
+               // return UserError.InvalidCredential;
 
             var (token, expireIn) = await _jwtProvider.CreateTokenAsync(user);
 
@@ -43,7 +44,9 @@ namespace SurveyBasket.ApI.Services
 
             await _userManager.UpdateAsync(user);
 
-            return rseponse;
+            return Result.Success(rseponse);
+
+           // return rseponse;
         }
 
         public async Task<AuthResponse?> GetRefreshToken(string token, string refreshToken, CancellationToken cancellationToken)

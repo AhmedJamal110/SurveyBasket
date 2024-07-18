@@ -80,6 +80,8 @@ namespace SurveyBasket.ApI.Extensions
 
 
         }
+
+
         private static IServiceCollection AddMapsterConfigration(this IServiceCollection services)
         {
             var config = TypeAdapterConfig.GlobalSettings;

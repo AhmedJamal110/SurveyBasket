@@ -1,9 +1,7 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿
 using Microsoft.AspNetCore.Mvc;
 using SurveyBasket.ApI.Contracts.Polls;
-using SurveyBasket.ApI.Services;
+using SurveyBasket.ApI.Extensions;
 
 namespace SurveyBasket.ApI.Controllers
 {
@@ -31,39 +29,33 @@ namespace SurveyBasket.ApI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PollResponse>> GetPoll(int id , CancellationToken cancellationToken)
+        public async Task<ActionResult> GetPoll(int id , CancellationToken cancellationToken)
         {
-             var poll =   await _pollServices.GetPollById(id , cancellationToken);
-            if (poll is null)
-                return NotFound();
-            var response = poll.Adapt<PollResponse>();
+            var poll = await _pollServices.GetPollById(id, cancellationToken);
 
-            return Ok(response);
+            return poll.IsSuccess
+                ? Ok(poll.Value)
+                : poll.ToProblem(StatusCodes.Status400BadRequest);
         
         }
 
         [HttpPost]
         public async Task<ActionResult<PollResponse>> CreatePoll(PollRequest request , CancellationToken cancellationToken)
         {
-            var poll = request.Adapt<Poll>();
-            await _pollServices.AddPoll(poll , cancellationToken);
-            var respons = poll.Adapt<PollResponse>();
-            return Ok(respons);
+            var Issuccess = await _pollServices.AddPoll(request,cancellationToken);
+            return Ok(Issuccess);
         
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<bool>> UpdatePoll([FromRoute] int id  , [FromBody] PollRequest request , CancellationToken cancellationToken)
+        public async Task<ActionResult> UpdatePoll([FromRoute] int id  , [FromBody] PollRequest request , CancellationToken cancellationToken)
         {
            
-            var poll = request.Adapt<Poll>();
+           // var poll = request.Adapt<Poll>();
             
-            var IsSuccess = await  _pollServices.UpdatePoll( id , poll , cancellationToken);
+            var response = await  _pollServices.UpdatePoll( id , request , cancellationToken);
 
-            if (!IsSuccess)
-                return NotFound("Poll Not Found");
-
-            return Ok("Edit Successfully");
+            return response.IsSuccess ?NoContent() : NotFound(response.Error); 
         }
 
 
