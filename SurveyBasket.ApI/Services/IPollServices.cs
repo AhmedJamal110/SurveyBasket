@@ -7,7 +7,7 @@ namespace SurveyBasket.ApI.Services
     {
         Task<IReadOnlyList<Poll>> GetALlPolls(CancellationToken cancellationToken= default);
         Task<TResult<PollResponse>> GetPollById(int id , CancellationToken cancellationToken = default);
-        Task<PollResponse> AddPoll(PollRequest pollRequest , CancellationToken cancellationToken = default);
+        Task<TResult<PollResponse>> AddPoll(PollRequest pollRequest , CancellationToken cancellationToken = default);
         Task<Result> UpdatePoll(int id , PollRequest pollRequest , CancellationToken cancellationToken = default);
         Task<bool> DeletePoll(int id , CancellationToken cancellationToken = default);
 

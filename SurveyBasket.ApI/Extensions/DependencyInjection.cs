@@ -33,7 +33,7 @@ namespace SurveyBasket.ApI.Extensions
                 option.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddScoped<IPollServices, PollServices>();
-            
+            services.AddScoped<IQuestionServices, QuestionServices>();
             //Mapster 
              services.AddMapsterConfigration();
             

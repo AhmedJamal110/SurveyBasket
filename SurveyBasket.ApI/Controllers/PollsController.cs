@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using SurveyBasket.ApI.Contracts.Polls;
+using SurveyBasket.ApI.Errors;
 using SurveyBasket.ApI.Extensions;
 
 namespace SurveyBasket.ApI.Controllers
@@ -42,20 +43,29 @@ namespace SurveyBasket.ApI.Controllers
         [HttpPost]
         public async Task<ActionResult<PollResponse>> CreatePoll(PollRequest request , CancellationToken cancellationToken)
         {
-            var Issuccess = await _pollServices.AddPoll(request,cancellationToken);
-            return Ok(Issuccess);
-        
+
+            var result = await _pollServices.AddPoll(request,cancellationToken);
+
+           
+
+            return result.IsSuccess 
+                ? Ok(result.Value)
+                : result.ToProblem((StatusCodes.Status409Conflict));
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdatePoll([FromRoute] int id  , [FromBody] PollRequest request , CancellationToken cancellationToken)
         {
            
-           // var poll = request.Adapt<Poll>();
             
             var response = await  _pollServices.UpdatePoll( id , request , cancellationToken);
 
-            return response.IsSuccess ?NoContent() : NotFound(response.Error); 
+            if (response.IsSuccess)
+                return NoContent();
+
+            return response.Error.Equals(PollErrors.PollDeplucated)
+                ? response.ToProblem(StatusCodes.Status409Conflict)
+                : response.ToProblem(StatusCodes.Status404NotFound);
         }
 
 

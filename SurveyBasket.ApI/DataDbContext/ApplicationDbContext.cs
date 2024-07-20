@@ -15,15 +15,30 @@ namespace SurveyBasket.ApI.DataDbContext
             _httpContextAccessor = httpContextAccessor;
         }
 
+                    // override modelCreating
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            var cascadeFks = modelBuilder.Model
+                                                            .GetEntityTypes()
+                                                            .SelectMany(t => t.GetForeignKeys())
+                                                            .Where(fk => fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+
+            foreach (var fk in cascadeFks)
+                fk.DeleteBehavior = DeleteBehavior.Restrict;
+
             base.OnModelCreating(modelBuilder);
         }
 
+
+                    /// ovride saveChanges
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-               var entities =  ChangeTracker.Entries<BaseEntity>();
+               
+            
+            var entities =  ChangeTracker.Entries<BaseEntity>();
             foreach (var entity in entities)
             {
                 var currentUser = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -45,5 +60,7 @@ namespace SurveyBasket.ApI.DataDbContext
         }
 
         public DbSet<Poll> Polls { get; set; }
+        public DbSet<Question>  Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
     }
 }

@@ -13,14 +13,22 @@ namespace SurveyBasket.ApI.Services
         {
             _context = context;
         }
-        public async Task<PollResponse> AddPoll(PollRequest pollRequest, CancellationToken cancellationToken = default)
+        public async Task<TResult<PollResponse>> AddPoll(PollRequest pollRequest, CancellationToken cancellationToken = default)
         {
+            var isExsiting = await _context.Polls.AnyAsync(x => x.Title == pollRequest.Title);
+
+
+                    if (isExsiting)
+                return Result.Faliure<PollResponse>(PollErrors.PollDeplucated);
+
             var polls = pollRequest.Adapt<Poll>();
 
             await _context.AddAsync(polls, cancellationToken);
             await _context.SaveChangesAsync(cancellationToken);
+
             var pollResponse = polls.Adapt<PollResponse>();
-            return pollResponse;
+            
+            return  Result.Success(pollResponse) ;
         }
 
         public async Task<bool> DeletePoll(int id , CancellationToken cancellationToken = default)
@@ -64,12 +72,18 @@ namespace SurveyBasket.ApI.Services
 
         public async Task<Result> UpdatePoll(int id , PollRequest pollRequest , CancellationToken cancellationToken = default)
         {
+
+            var isExsiting = await _context.Polls.AnyAsync(x => x.Title == pollRequest.Title && x.Id != id);
+            if (isExsiting)
+                return Result.Failure(PollErrors.PollDeplucated);
+
+
              var pollInDb =  await _context.Polls.FindAsync(id , cancellationToken);
 
             if (pollInDb is null)
                 return Result.Failure(PollErrors.PollNotFound);
                
-            pollInDb.Id = id;
+            //pollInDb.Id = id;
             pollInDb.Title = pollRequest.Title;
             pollInDb.Summary = pollRequest.Summary;
             pollInDb.StartsAt = pollRequest.StartsAt;
