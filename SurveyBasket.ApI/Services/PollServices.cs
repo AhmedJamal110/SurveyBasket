@@ -46,6 +46,13 @@ namespace SurveyBasket.ApI.Services
         public async Task<IReadOnlyList<Poll>> GetALlPolls(CancellationToken cancellationToken = default)
         =>  await _context.Polls.AsNoTracking().ToListAsync(cancellationToken);
 
+        public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellationToken)
+        {
+          return   await _context.Polls.Where(x => x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
+                                .AsNoTracking()
+                                .ProjectToType<PollResponse>()
+                                .ToListAsync();
+        }
 
         public async Task<TResult<PollResponse>> GetPollById(int id , CancellationToken cancellationToken = default)
         {
@@ -96,4 +103,8 @@ namespace SurveyBasket.ApI.Services
             return Result.Success();
         }
     }
+
+
+
+
 }

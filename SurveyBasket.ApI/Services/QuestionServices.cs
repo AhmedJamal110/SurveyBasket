@@ -67,6 +67,36 @@ namespace SurveyBasket.ApI.Services
             return Result.Success<IEnumerable<QuestionResponse>>(questions);
         }
 
+        public async Task<TResult<IEnumerable<QuestionResponse>>> GetAvailableQuestionAsync(int pollId, string userId, CancellationToken cancellationToken)
+        {
+            // check if user had vote before
+            var hasVote = await _context.Votes.AnyAsync(x => x.PollId == pollId && x.UserId == userId);
+            if (hasVote)
+                return Result.Faliure<IEnumerable<QuestionResponse>>(VoteErrors.VoteDublicated);
+
+            // chick poll ( isPublish - stratsAt , EndsAt)
+
+            var pollExis = await _context.Polls.AnyAsync(   x => x.Id == pollId  &&  x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow)
+                && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow)
+            );
+
+                if(!pollExis)
+                          return Result.Faliure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
+
+            var questions = await _context.Questions.Where(x => x.PollId == pollId)
+                                                                        .Include(x => x.Answers)
+                                                                        .Select(q => new QuestionResponse(
+                                                                            q.Id,
+                                                                            q.Content,
+                                                                            q.Answers.Where(a => a.Active).Select(a => new AnswerResponse(a.Id, a.Content))))
+                                                                         .AsNoTracking()
+                                                                         .ToListAsync();
+
+            return Result.Success<IEnumerable<QuestionResponse>>(questions);                                       
+
+
+        }
+
         public async Task<TResult<QuestionResponse>> GetQustionById(int pollId, int id, CancellationToken cancellationToken = default)
         {
             //var questionExsits = await _context.Polls.AnyAsync(x => x.Id == pollId);
