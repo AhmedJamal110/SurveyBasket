@@ -1,4 +1,5 @@
 ﻿
+using Hangfire;
 using Microsoft.OpenApi.Models;
 using SurveyBasket.ApI.Settings;
 
@@ -44,6 +45,8 @@ namespace SurveyBasket.ApI.Extensions
             //fluentValidation
              services.AddFluentValidationConfigration();
 
+            //Hanfire
+            services.AddHangfireJobsConfigration(configuration);
             return services;
         }
 
@@ -84,9 +87,7 @@ namespace SurveyBasket.ApI.Extensions
 
 
         }
-
-
-        private static IServiceCollection AddMapsterConfigration(this IServiceCollection services)
+         private static IServiceCollection AddMapsterConfigration(this IServiceCollection services)
         {
             var config = TypeAdapterConfig.GlobalSettings;
             config.Scan(Assembly.GetExecutingAssembly());
@@ -100,6 +101,21 @@ namespace SurveyBasket.ApI.Extensions
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
                  return services;
         }
+         private static IServiceCollection AddHangfireJobsConfigration(this IServiceCollection services , IConfiguration configuration)
+        {
+
+            services.AddHangfire(config =>
+            {
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                                                            .UseSimpleAssemblyNameTypeSerializer()
+                                                      .UseRecommendedSerializerSettings()
+                        .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection"));
+            });
+
+                      services.AddHangfireServer();
+                          return services;
+        }
+
 
 
     }

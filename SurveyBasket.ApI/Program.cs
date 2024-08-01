@@ -1,4 +1,5 @@
 
+using Hangfire;
 using SurveyBasket.ApI.Extensions;
 
 namespace SurveyBasket.ApI
@@ -25,6 +26,7 @@ namespace SurveyBasket.ApI
             }
 
             app.UseHttpsRedirection();
+            app.MapHangfireDashboard("/jobs");
             app.UseCors();
             app.UseAuthorization();
 
