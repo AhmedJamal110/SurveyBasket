@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
 using SurveyBasket.ApI.JwtService;
 
@@ -10,11 +11,11 @@ namespace SurveyBasket.ApI.Extensions
         {
             services.AddScoped<IAuthService, AuthServices>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
-
             services.AddIdentity<AppUser, IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
-
-
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddHttpContextAccessor();
             var settingsJwt = configuration.GetSection(JwtOption.SectionName).Get<JwtOption>();
         
             
@@ -46,6 +47,14 @@ namespace SurveyBasket.ApI.Extensions
                         ClockSkew = TimeSpan.Zero,
                     };
                 });
+
+            services.Configure<IdentityOptions>(opt =>
+            {
+                opt.Password.RequiredLength = 8;
+                opt.SignIn.RequireConfirmedEmail = true;
+                opt.User.RequireUniqueEmail = true;
+            });
+
 
             return services;
         }

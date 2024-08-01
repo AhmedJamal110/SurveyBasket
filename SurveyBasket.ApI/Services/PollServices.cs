@@ -31,6 +31,8 @@ namespace SurveyBasket.ApI.Services
             return  Result.Success(pollResponse) ;
         }
 
+
+
         public async Task<bool> DeletePoll(int id , CancellationToken cancellationToken = default)
         {
             var poll = await _context.Polls.FindAsync(id , cancellationToken);

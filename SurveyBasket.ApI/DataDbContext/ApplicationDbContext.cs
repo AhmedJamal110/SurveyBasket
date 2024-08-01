@@ -1,7 +1,4 @@
-﻿
-
-using System.Diagnostics.Eventing.Reader;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 
 namespace SurveyBasket.ApI.DataDbContext
 {

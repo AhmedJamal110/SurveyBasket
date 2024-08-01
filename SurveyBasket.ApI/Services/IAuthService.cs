@@ -11,6 +11,12 @@ namespace SurveyBasket.ApI.Services
         Task<AuthResponse?> GetRefreshToken(string token, string refreshToken, CancellationToken cancellationToken);
         Task<bool> RevokeRefreshToken(string token, string refreshToken, CancellationToken cancellationToken);
 
+        Task<Result> ResgisterAsync(RegisterRequest request, CancellationToken cancellationToken = default);
+
+        Task<Result> ConfairmEmailAsync(ConfairmEmailRequest request , CancellationToken cancellationToken = default);
+
+
+        Task<Result> ResendConfairmEmailAsync(ResendConfirmEmail request, CancellationToken cancellationToken = default);
 
     }
 }

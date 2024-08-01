@@ -31,7 +31,7 @@ namespace SurveyBasket.ApI.Services
             var questionInDb = request.Adapt<Question>();
             questionInDb.PollId = pollId;
 
-           // request.Answers.ForEach(answer => questionInDb.Answers.Add(new Answer { Content  = answer}));
+           //request.Answers.ForEach(answer => questionInDb.Answers.Add(new Answer { Content  = answer}));
 
             
            await  _context.Questions.AddAsync(questionInDb, cancellationToken);
@@ -77,8 +77,7 @@ namespace SurveyBasket.ApI.Services
             // chick poll ( isPublish - stratsAt , EndsAt)
 
             var pollExis = await _context.Polls.AnyAsync(   x => x.Id == pollId  &&  x.IsPublished && x.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow)
-                && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow)
-            );
+                && x.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow));
 
                 if(!pollExis)
                           return Result.Faliure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);

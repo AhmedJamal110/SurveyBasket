@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.OpenApi.Models;
+using SurveyBasket.ApI.Settings;
 
 namespace SurveyBasket.ApI.Extensions
 {
@@ -34,6 +35,9 @@ namespace SurveyBasket.ApI.Extensions
             });
             services.AddScoped<IPollServices, PollServices>();
             services.AddScoped<IQuestionServices, QuestionServices>();
+
+            services.Configure<EmailSettings>(configuration.GetSection(nameof(EmailSettings)));
+
             //Mapster 
              services.AddMapsterConfigration();
             

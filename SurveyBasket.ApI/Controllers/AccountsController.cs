@@ -69,22 +69,32 @@ namespace SurveyBasket.ApI.Controllers
 
 
         [HttpPost("register")]
-        public async Task<ActionResult<AuthResponse>> Register(AuthRequest request)
+        public async Task<ActionResult> Register(RegisterRequest request , CancellationToken cancellationToken)
         {
-            var user = new AppUser
-            {
-                Email = request.Email,
-                UserName = request.Email.Split("@")[0]
+           var result =  await  _authService.ResgisterAsync(request , cancellationToken);
 
-            };
-
-            var result = await _userManager.CreateAsync(user, request.Password);
-            if (!result.Succeeded)
-                return BadRequest("Email Invalid");
-
-            return Ok();
-
+            return result.IsSuccess ? Ok() : result.ToProblem(StatusCodes.Status401Unauthorized);
         }
-    
+
+
+
+
+        [HttpPost("confirm-email")]
+        public async Task<ActionResult> ConfairmEmail(ConfairmEmailRequest request, CancellationToken cancellationToken)
+        {
+            var result = await _authService.ConfairmEmailAsync(request, cancellationToken);
+
+            return result.IsSuccess ? Ok() : result.ToProblem(StatusCodes.Status400BadRequest);
+        }
+
+
+        [HttpPost("resend-confirm-email")]
+        public async Task<ActionResult> ResendConfairmEmail(ResendConfirmEmail request, CancellationToken cancellationToken)
+        {
+            var result = await _authService.ResendConfairmEmailAsync(request, cancellationToken);
+
+            return result.IsSuccess ? Ok() : result.ToProblem(StatusCodes.Status400BadRequest);
+        }
+
     }
 }
