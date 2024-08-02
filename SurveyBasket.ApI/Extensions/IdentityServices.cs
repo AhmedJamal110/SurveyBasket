@@ -15,6 +15,9 @@ namespace SurveyBasket.ApI.Extensions
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
             services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IUserService, UserService>();
+
+
             services.AddHttpContextAccessor();
             var settingsJwt = configuration.GetSection(JwtOption.SectionName).Get<JwtOption>();
         
